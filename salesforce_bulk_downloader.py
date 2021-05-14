@@ -207,7 +207,7 @@ class SalesforceDownload:
                 log.info("PK chunking batch is ready")
                 batch.is_done = True
                 return batch
-            elif status != "Queued":
+            elif status not in ("Queued", "InProgress"):
                 raise Exception(f"Error chunking results, first batch status {status}")
 
             if datetime.now(timezone.utc) >= wait_until:
@@ -325,7 +325,7 @@ class SalesforceDownload:
                     batch_id=batch.batch_id, job_id=batch.job_id
                 ):
                     result = json.load(IteratorBytesIO(result))
-                    log.info(f"Recorcds in batch {len(result)}")
+                    log.info(f"Records in batch {len(result)}")
                     for record in result:
                         # don't need attributes (table name and url, so that result is a flat json)
                         del record["attributes"]
